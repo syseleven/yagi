@@ -28,7 +28,7 @@ glance_cuf_template_per_image = ("""<event endTime="%(end_time)s" """
 
 neutron_pub_ipv4_v1_cuf_template = (
 """<event xmlns="http://docs.rackspace.com/core/event" """
-"""xmlns:neutron="http://docs.rackspace.com/usage/neutron/public-ip-usage" """
+"""xmlns:neutron="http://docs.rackspace.com/usage/neutron/ipuptime" """
 """id="{id}" """
 """version="1" """
 """resourceId="{resourceId}" """
@@ -41,6 +41,7 @@ neutron_pub_ipv4_v1_cuf_template = (
 """region="{region}"> """
 """<neutron:product serviceCode="CloudNetworks" """
 """resourceType="{resourceType}" """
+"""version="1" """
 """ipType="{ipType}"/> """
 """</event>"""
 )
