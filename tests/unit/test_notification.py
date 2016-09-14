@@ -78,7 +78,7 @@ class TestGlanceNotification(TestCase):
             '2013-09-02 23:59:59.999999').AndReturn(datetime.datetime(
                 2013, 9, 2, 23, 59, 59, 999999))
         self.mox.ReplayAll()
-        expected_cuf_xml = {'payload': ("""<events><event endTime="2013-09-02T23:59:59Z" """
+        expected_cuf_xml = {'payload': ("""<event endTime="2013-09-02T23:59:59Z" """
         """startTime="2013-09-02T00:00:00Z" region="DFW" dataCenter="DFW1" """
         """type="USAGE" id="uuid1" resourceId="image1" tenantId="owner1" """
         """version="1"> <glance:product storage="12345" serverId="inst_uuid1" """
@@ -88,7 +88,7 @@ class TestGlanceNotification(TestCase):
         """type="USAGE" id="uuid2" resourceId="image2" tenantId="owner1" """
         """version="1"> <glance:product storage="67890" serverId="inst_uuid2" """
         """serviceCode="Glance" serverName="" resourceType="snapshot" """
-        """version="1"/></event></events>""")}
+        """version="1"/></event>""")}
         notification = GlanceNotification(exists_message,
                                           event_type=event_type,
                                           region='DFW',
