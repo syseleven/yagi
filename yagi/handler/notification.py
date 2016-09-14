@@ -124,14 +124,13 @@ class GlanceNotification(BaseNotification):
     def _create_cuf_xml(self, json_body):
         payload = GlanceNotificationPayload(json_body['payload'], atom_hopper_time_format)
         images = payload.images
-        cuf = "<events>"
+        cuf = ""
         for image in images:
             image['id'] = self.generate_new_id(extra=image['resource_id'])
             image['data_center'] = self.data_center
             image['region'] = self.region
             cuf_xml = glance_cuf_template_per_image % image
             cuf += cuf_xml
-        cuf += "</events>"
         return cuf
 
 
