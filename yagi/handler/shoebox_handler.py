@@ -19,44 +19,41 @@ class ShoeboxHandler(yagi.handler.BaseHandler):
        to refactor one or the other to clean it up.
     """
 
+    CONFIG_SECTION = "shoebox"
+
     def __init__(self, app=None, queue_name=None):
         super(ShoeboxHandler, self).__init__(app, queue_name)
         # Don't use interpolation from ConfigParser ...
-        self.config = dict(yagi.config.config.items('shoebox', raw=True))
-        roll_checker_str = self.config.get('roll_checker')
+        self.config = self.config_getsection(raw=True)
+        roll_checker_str = self.config.pop('roll_checker', None)
         self.roll_checker = None
         if roll_checker_str:
             self.roll_checker = simport.load(roll_checker_str)(**self.config)
-        self.working_directory = self.config.get('working_directory', '.')
-        self.destination_folder = self.config.get('destination_folder', '.')
+        self.working_directory = self.config.pop('working_directory', '.')
+        self.destination_folder = self.config.pop('destination_folder', '.')
         for d in [self.working_directory, self.destination_folder]:
             if not os.path.isdir(d):
                 os.makedirs(d)
-        template=self.config.get('filename_template',
+        template=self.config.pop('filename_template',
                                  'events_%Y_%m_%d_%X_%f.dat')
-        callback_str = self.config.get('callback')
+        callback_str = self.config.pop('callback', None)
         cb = None
         if callback_str:
             cb = simport.load(callback_str)(**self.config)
 
-        roll_manager_str = self.config.get('roll_manager',
+        roll_manager_str = self.config.pop('roll_manager',
                                     'shoebox.roll_manager:WritingRollManager')
 
-        self.wrap_payload_with_region = self.config.get(
+        self.wrap_payload_with_region = self.config.pop(
                             'wrap_payload_with_region', 'False') == 'True'
 
-        self.region = self.config.get('wrap_region', 'n/a')
-        self.cell = self.config.get('wrap_cell', 'n/a')
-
-        # Hack(sandy): These sorts of parameters should be left to the
-        # callback handlers. Just need it here to get over the hump.
-        # Needs to be refactored.
-        roll_size_mb = self.config.get('roll_size_mb', 1000)
+        self.region = self.config.pop('wrap_region', 'n/a')
+        self.cell = self.config.pop('wrap_cell', 'n/a')
 
         self.roll_manager = simport.load(roll_manager_str)(template,
                         self.roll_checker, directory=self.working_directory,
                         destination_directory=self.destination_folder,
-                        archive_callback=cb, roll_size_mb=roll_size_mb)
+                        archive_callback=cb, **self.config)
 
     def handle_messages(self, messages, env):
         # TODO(sandy): iterate_payloads filters messages first ... not

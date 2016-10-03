@@ -20,6 +20,14 @@ class BaseHandler(object):
     def config_getbool(self, key, default=None):
         return self._config_get(yagi.config.get_bool, key, default=default)
 
+    def config_getsection(self, **kwargs):
+        if self.queue_name is not None:
+            try:
+                return dict(yagi.config.config.items("%s:%s" % (self.CONFIG_SECTION, self.queue_name), **kwargs))
+            except NoSectionError:
+                pass
+        return dict(yagi.config.config.items(self.CONFIG_SECTION, **kwargs))
+
     def _config_get(self, method, key, default=None):
         val = None
         if self.queue_name is not None:
